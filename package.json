@@ -1,0 +1,35 @@
+{
+  "name": "@fgilde/dockwipe",
+  "version": "1.0.1",
+  "description": "Can delete the whole world of docker images",
+  "main": "index.js",
+  "scripts": {
+    "test": "run",
+    "patch-release": "npm version patch && npm publish --access public && git push --follow-tags"
+  },
+  "bin": {
+    "dockwipe": "index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fgilde/dockwipe.git"
+  },
+  "keywords": [
+    "dockwipe",
+    "delete docker images",
+    "delete docker tags"
+  ],
+  "author": "Florian Gilde",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "axios": "1.2.2",
+    "chalk": "^5.2.0",
+    "figlet": "^1.6.0",
+    "inquirer": "9.1.4",
+    "shelljs": "^0.8.5"
+  },
+  "bugs": {
+    "url": "https://github.com/fgilde/dockwipe/issues"
+  },
+  "homepage": "https://github.com/fgilde/dockwipe#readme"
+}
