@@ -1,6 +1,6 @@
 {
   "name": "@fgilde/dockwipe",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Can delete the whole world of docker images",
   "main": "index.js",
   "scripts": {
