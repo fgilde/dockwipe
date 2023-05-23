@@ -94,3 +94,11 @@ If a value is provided in the command line args or the config file, it overrides
 
 ## License
 This project is licensed under the GPL-3.0 License - see the [LICENSE.md](https://github.com/fgilde/dockwipe/blob/main/LICENSE.md) file for details
+
+### If you like this tool, please star it on [Github](https://github.com/fgilde/dockwipe)  and share it with your friends
+If not, you can give a star anyway and let me know what I can improve to make it better for you.
+
+
+## Links
+[Github Repository](https://github.com/fgilde/dockwipe) |
+[NPM Package](https://www.npmjs.com/package/@fgilde/dockwipe)
