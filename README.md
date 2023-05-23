@@ -1,4 +1,10 @@
-# DockWipe
+      ____                   _     __        __  _                
+    |  _ \    ___     ___  | | __ \ \      / / (_)  _ __     ___
+    | | | |  / _ \   / __| | |/ /  \ \ /\ / /  | | | '_ \   / _ \
+    | |_| | | (_) | | (__  |   <    \ V  V /   | | | |_) | |  __/
+    |____/   \___/   \___| |_|\_\    \_/\_/    |_| | .__/   \___|
+                                                   |_|
+
 
 ## Table of Contents
 - [Introduction](#introduction)
@@ -43,15 +49,27 @@ To delete a tag 'tag1' from an image, use:
 dockwipe --registry=yourRegistry --image=yourImage --username=yourUsername --password=yourPassword --tags=tag1
 ```
 
-Or you can use the configuration file:
+Or you can use the configuration file(s):
 
 ```
-dockwipe --file=yourConfigFile.json
+dockwipe --files=yourConfigFile.json, second.json
 ```
 
 ## Configuration File
-You can specify a configuration file to provide the options. The file should be in JSON format:
+You can specify one or more configuration files to 
+provide the options. The file(s) should be in JSON format:
+If you specify more files, the options are merged.
+This is usefull to have public options in a file that is checked in and private options in a file that is not checked in.
+If the same option is provided in multiple files, the last one wins.
+If you didn't provide a password in the config file, you will be asked for it in the UI.
+Notice: If you didn't specify any file, the default files are used when available in the current directory.
+The default files are:
+```
+'.dockwipe', '.dockwipe.user', '.dockwipe.secret', 'dockwipe.json', 'dockwipe.secret.json', 'dockwipe.user.json' 
+```
 
+
+The config file should have the following format:
 ```
 {
 "registry": "docker-registry.services.yourserver.de",

@@ -1,0 +1,9 @@
+{
+  "registry": "docker-registry.company.de",
+  "username": "root",
+
+  "defaults": {
+    "registry": "docker-registry.company.de",
+    "image": "nameof/image"
+  }
+}

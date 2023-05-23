@@ -4,7 +4,7 @@ const axios = require('axios');
 const fs = require('fs');
 
 const name = 'DockWipe';
-const optionFiles = ['.dockwipe', 'dockwipe.json'];
+const optionFiles = ['.dockwipe', '.dockwipe.user', '.dockwipe.secret', 'dockwipe.json', 'dockwipe.secret.json', 'dockwipe.user.json'];
 
 function arg(keys, defaultValue) {
     const keyArray = Array.isArray(keys) ? keys : [keys];
@@ -40,49 +40,60 @@ function arg(keys, defaultValue) {
 
     console.log(chalk.yellow(figlet.textSync(name, { horizontalLayout: 'full' })));
     console.log(chalk.blue('---- Welcome to ' + chalk.green.bold(name) + '! ----'));
-    let file = arg(['file', 'f']) || optionFiles.find(f => fs.existsSync(f))
 
-    if (file){
-        console.log(`Using options from file ${file}`,);
-    }
+    let specifiedFiles = arg(['file', 'files', 'f']);
+    let files = (specifiedFiles ? specifiedFiles.split(',') : optionFiles).filter(f => fs.existsSync(f));
 
-    const fromFileOptions = file && fs.existsSync(file)
-        ? JSON.parse(fs.readFileSync(file, 'utf8'))
-        : {};
+    const fileOptions = files.map(file => {
+        console.log(`Using options from file ${file}`);
+        return JSON.parse(fs.readFileSync(file, 'utf8'));
+    });
 
-    const options = {
-        registry: arg(['registry', 'r'], fromFileOptions.registry),
-        image: arg(['image', 'i'], fromFileOptions.image),
-        username: arg(['username', 'u', 'user'], fromFileOptions.username),
-        password: arg(['password', 'p', 'pass'], fromFileOptions.password),
-        tags: arg(['tags', 't'], fromFileOptions.tags || '' ).split(',').filter(t => !!t)
+    let options = {
+        registry: arg(['registry', 'r']),
+        image: arg(['image', 'i']),
+        username: arg(['username', 'u', 'user']),
+        password: arg(['password', 'p', 'pass']),
+        tags: arg(['tags', 't']) ? arg(['tags', 't']).split(',').filter(t => !!t) : []
     };
+
+    // Merge options
+    fileOptions.reverse().forEach(fromFileOptions => {
+        options = {
+            registry: options.registry || fromFileOptions.registry,
+            image: options.image || fromFileOptions.image,
+            username: options.username || fromFileOptions.username,
+            password: options.password || fromFileOptions.password,
+            tags: options.tags.length > 0 ? options.tags : (fromFileOptions.tags || '').split(',').filter(t => !!t),
+            defaults: options.defaults || fromFileOptions.defaults,
+        };
+    });
 
 
     const promptData = await inquirer.prompt([
         {
             name: 'registry',
             message: 'Docker registry:',
-            default: fromFileOptions?.defaults?.registry || 'https://hub.docker.com',
+            default: options?.defaults?.registry || 'https://hub.docker.com',
             when: !options.registry
         },
         {
             name: 'image',
             message: 'Docker image:',
-            default: fromFileOptions?.defaults?.image,
+            default: options?.defaults?.image,
             when: !options.image
         },
         {
             name: 'username',
             message: 'Username:',
-            default: fromFileOptions?.defaults?.username,
+            default: options?.defaults?.username,
             when: !options.username
         },
         {
             type: 'password',
             name: 'password',
             message: 'Password:',
-            default: fromFileOptions?.defaults?.password,
+            default: options?.defaults?.password,
             when: !options.password
         },
     ]);
@@ -91,7 +102,10 @@ function arg(keys, defaultValue) {
     const userData = Object.assign(promptData, filteredOptions);
 
     console.log('Using the following data:');
-    console.table({ ...userData, password: userData.password ? '********' : undefined });
+    let tabularData = { ...userData, password: userData.password ? '********' : undefined };
+    tabularData.tags = tabularData.tags && tabularData.tags.length ? tabularData.tags.join(',') : '<none>';
+    delete tabularData.defaults;
+    console.table(tabularData);
 
     const apiUrl = `https://${userData.registry}/v2/${userData.image}`;
     const basicAuth = Buffer.from(`${userData.username}:${userData.password}`).toString('base64');
